@@ -1,1 +1,20 @@
-test
+<div class="content-padding">
+	<h2>Глобал-Тендер</h2>
+	{% if not request.user.is_authenticated %}
+		<p>Для продолжения работы необходима авторизация:</p>
+		{% if errors %}
+			{% for error in errors %}
+				<span class="red">{{ error }}</span><br />
+			{% endfor %}
+		{% endif %}
+		<div>
+			<form method="POST" action="/" class="auth-form">
+				<label>Имя пользователя: </label><input type="text" name="username"><br />
+				<label>Пароль: </label><input type="password" name="password"><br />
+				<input type="submit" value="Авторизоваться"><br />
+			</form>
+		</div
+	{% else %}
+		<a href="/logout/">Выйти</a>
+	{% endif %}
+</div>
