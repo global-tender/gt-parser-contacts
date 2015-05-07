@@ -46,6 +46,7 @@ SecretStorage==2.0.0
 simplegeneric==0.8.1
 simplejson==3.3.1
 six==1.9.0
+South==1.0.2
 stevedore==1.4.0
 Twisted==13.2.0
 Twisted-Conch==13.2.0
