@@ -47,9 +47,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'gt_parser_contacts.urls'
+ROOT_URLCONF = 'systemTool.urls'
 
-WSGI_APPLICATION = 'gt_parser_contacts.wsgi.application'
+WSGI_APPLICATION = 'systemTool.wsgi.application'
 
 
 # Database
