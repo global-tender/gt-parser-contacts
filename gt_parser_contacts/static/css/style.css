@@ -17,7 +17,7 @@
     color: #666;
 }
 
-.auth-form input[type=submit] {
+input[type=submit] {
     background-color: #68b12f;
     background: -webkit-gradient(linear, left top, left bottom, from(#68b12f), to(#50911e));
     background: -webkit-linear-gradient(top, #68b12f, #50911e);
@@ -63,4 +63,8 @@
 .red {
 	color: #ff0000;
 	font-weight: bold;
+}
+
+td {
+    border: 1px solid #000;
 }
