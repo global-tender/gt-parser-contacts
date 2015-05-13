@@ -114,85 +114,57 @@ def getCompanyList(fz, region, pageNumber=1, perPage=10):
 def getOrganizationContacts(url, name):
 	errors = []
 
-	kt = 0
-	def strm(kt):
-		kt = kt + 1
-		if kt == 3:
-			return None, kt
-		try:
-			opener = urllib2.build_opener()
-			opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-			stream = opener.open(url).read().decode('utf-8')
-			return stream, kt
-		except:
-			time.sleep(5)
-			return strm(kt)
-	stream, kt = strm(kt)
-
-	if stream == None:
-		errors.append(u'Ошибка загрузки контактов по организации: %s' % name)
-
 	contacts = {}
 	contacts['Имя организации'] = name
 	contacts['URL'] = url
 
-	if '/223/' in url:
-		contacts['ФЗ'] = '№ 223-ФЗ'
-		info = stream.split(u'Контактная информация')[1].split('noticeTabBoxWrapper')[1]
-		soup = BeautifulSoup(info)
+	try:
+		kt = 0
+		def strm(kt):
+			kt = kt + 1
+			if kt == 3:
+				return None, kt
+			try:
+				opener = urllib2.build_opener()
+				opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+				stream = opener.open(url).read().decode('utf-8')
+				return stream, kt
+			except:
+				time.sleep(5)
+				return strm(kt)
+		stream, kt = strm(kt)
 
-		for tr in soup.find_all('tr'):
-			f_key = ''
-			for td in tr.find_all('td'):
-				if f_key == '':
-					f_key = td.text.strip()
-				else:
-					contacts[f_key] = td.text.strip()
-					f_key = ''
-					break
-	if '/pgz/' in url:
-		contacts['ФЗ'] = '№ 44-ФЗ (94-ФЗ)'
-		info = stream.split(u'Контактная информация')[1].split(u'Часовая зона')[0]
-		soup = BeautifulSoup(info)
+		if stream == None:
+			errors.append(u'Ошибка загрузки контактов по организации: %s' % name)
 
-		f_key = ''
-		for span in soup.find_all('span'):
-			if f_key == '':
-				f_key = span.text.strip()
-			else:
-				contacts[f_key] = span.text.strip()
+		if '/223/' in url:
+			contacts['ФЗ'] = '№ 223-ФЗ'
+			info = stream.split(u'Контактная информация')[1].split('noticeTabBoxWrapper')[1]
+			soup = BeautifulSoup(info)
+
+			for tr in soup.find_all('tr'):
 				f_key = ''
-				continue
+				for td in tr.find_all('td'):
+					if f_key == '':
+						f_key = td.text.strip()
+					else:
+						contacts[f_key] = td.text.strip()
+						f_key = ''
+						break
+		if '/pgz/' in url:
+			contacts['ФЗ'] = '№ 44-ФЗ (94-ФЗ)'
+			info = stream.split(u'Контактная информация')[1].split(u'Часовая зона')[0]
+			soup = BeautifulSoup(info)
+
+			f_key = ''
+			for span in soup.find_all('span'):
+				if f_key == '':
+					f_key = span.text.strip()
+				else:
+					contacts[f_key] = span.text.strip()
+					f_key = ''
+					continue
+	except Exception as e:
+		errors.append(u"Не удалось получить контактную информацию по организации: %s (%s)" % (url, e))
 
 	return contacts, errors
-
-def createXLSX(contacts):
-	errors = []
-
-	def randomword(length):
-		return ''.join(random.choice(string.lowercase) for i in range(length))
-
-	t = time.localtime( time.time() )
-	t = time.strftime( '%Y-%m-%dT%H-%M-%S', t )
-
-	filename = t + '_' + randomword(10) + '.xlsx'
-	fullpath = 'gt_parser_contacts/static/xlsx/' + filename
-
-	workbook = xlsxwriter.Workbook(fullpath)
-	worksheet = workbook.add_worksheet()
-
-
-	row = 0
-	col = 0
-
-	for org_url, org_details in contacts.iteritems():
-
-		for org_key, org_value in org_details.iteritems():
-			worksheet.write(row, col, u'%s' % org_value)
-			print(org_value)
-			col = col + 1
-		row = row + 1
-
-	workbook.close()
-
-	return filename, errors

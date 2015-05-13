@@ -1,3 +1,12 @@
+### Requires:
+```
+python2
+python3
+python-pip
+python3-pip
+pip3 install XlsxWriter
+```
+
 ### Set up virtualenv, ex (using virtualenvwrapper):
 
 ```
@@ -9,7 +18,7 @@ $ source /usr/local/bin/virtualenvwrapper.sh
 $ mkvirtualenv --system-site-packages gt_parser_contacts
 $ workon gt_parser_contacts
 
-# enter repository root directory and install python packages:
+# enter repository root directory and install other required python packages:
 $ pip install -r requirements.txt
 ```
 

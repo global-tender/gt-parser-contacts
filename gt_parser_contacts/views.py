@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+import json, time
+import random, string
+import os
+import ast
+from subprocess import Popen, PIPE
+
 from django.conf import settings
 from django.http import StreamingHttpResponse
 from django.template import RequestContext, loader
@@ -59,7 +65,29 @@ def index(request):
 				parsed_details, contact_errors = utility.getOrganizationContacts(org_url, org_name)
 
 				contacts[org_url] = parsed_details
-			#xlsx_file, xlsx_errors = utility.createXLSX(contacts)
+
+			# Generated dictionary to json file
+			t = time.localtime( time.time() )
+			t = time.strftime( '%Y-%m-%dT%H-%M-%S', t )
+
+			def randomword(length):
+				return ''.join(random.choice(string.lowercase) for i in range(length))
+
+			json_obj = json.dumps(contacts, indent=4)
+			fn = os.getcwd() + os.sep + 'gt_parser_contacts/static/json/' + t + randomword(5) + '.json'
+			fo = open(fn, "w")
+			fo.write(json_obj)
+			fo.close()
+
+			# Process json file with python3
+			script = os.getcwd() + os.sep + 'gt_parser_contacts/scripts/proc_contacts.py'
+			command = "python3 %s %s" % (script, fn)
+			proc = Popen(command.split(), stdout=PIPE).communicate()
+
+			if proc[0] == "error":
+				xlsx_errors.append('Failed to create xlsx file.')
+			else:
+				xlsx_file = proc[0]
 
 	template = loader.get_template('index.html')
 	template_args = {
@@ -73,7 +101,6 @@ def index(request):
 		'xlsx_file': xlsx_file,
 		'xlsx_errors': xlsx_errors,
 		'contact_errors': contact_errors,
-		'contacts': contacts,
 	}
 	context = RequestContext(request, template_args)
 	return StreamingHttpResponse(template.render(context))

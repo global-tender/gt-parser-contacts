@@ -42,7 +42,7 @@
 			{% endif %}
 		{% endif %}
 
-		{% if contacts %}
+		{% if xlsx_file %}
 			{% if errors %}
 				{% for error in errors %}
 					<span class="red">{{ error }}</span><br />
@@ -60,20 +60,10 @@
 					<span class="red">{{ error }}</span><br />
 				{% endfor %}
 			{% else %}
-				<table>
-				{% for contact,details in contacts.iteritems %}
-					<tr>
-					{% for detail_key,detail_value in details.iteritems %}
-						<td>{{detail_value}}</td>
-					{% endfor %}
-					</tr>
-				{% endfor %}
-				</table>
-				<br /><br /><a href="/clear/">Сброс</a>
-
+				<p><a href="/static/xlsx/{{xlsx_file}}">Скачать XLSX файл с контактами</a></p>
 			{% endif %}
 		{% endif %}
-
+		<br /><br /><a href="/clear/">Сброс</a>
 		<br /><br /><a href="/logout/">Выйти</a>
 	{% endif %}
 </div>

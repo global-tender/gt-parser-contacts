@@ -1,3 +1,4 @@
 db/*.sqlite3
 *.pyc
 gt_parser_contacts/static/xlsx/*.xlsx
+gt_parser_contacts/static/json/*.json
