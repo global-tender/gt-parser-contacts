@@ -26,6 +26,12 @@ def index(request):
 	contacts = None
 	xlsx_file = None
 
+	accessible = True
+	try:
+		st = urllib2.urlopen('http://zakupki.gov.ru/223/ppa/public/organization/organization.html').read()
+	except:
+		accessible = False
+
 	if request.POST.get('username', "").strip() != "" and request.POST.get('password', "").strip() != "":
 		username = request.POST['username']
 		password = request.POST['password']
@@ -94,6 +100,7 @@ def index(request):
 		'content': 'index_content.html',
 		'request': request,
 		'title': '',
+		'accessible': accessible,
 		'regions': regions,
 		'errors': errors,
 		'pages': pages,

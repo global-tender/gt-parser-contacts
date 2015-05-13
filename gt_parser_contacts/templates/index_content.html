@@ -1,5 +1,5 @@
 <div class="content-padding">
-	<h2>Глобал-Тендер</h2>
+	<h2>Глобал-Тендер: Контакты организаций</h2>
 	{% if not request.user.is_authenticated %}
 		<p>Для продолжения работы необходима авторизация:</p>
 		{% if errors %}
@@ -13,6 +13,10 @@
 				<label>Пароль: </label><input type="password" name="password"><br />
 				<input type="submit" value="Авторизоваться"><br />
 			</form>
+		</div>
+	{% elif not accessible %}
+		<div>
+			<span class="red">В разделе информации о размещении заказов на http://zakupki.gov.ru/ ведутся регламентные работы.</span>
 		</div>
 	{% else %}
 		{% if regions %}
