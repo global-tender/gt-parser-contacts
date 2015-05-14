@@ -36,7 +36,7 @@ All-sufficient guide: http://goodcode.io/blog/django-nginx-gunicorn/
 Running gunicorn (WSGI HTTP Server) this way (3 instances, max timeout 180 seconds):
 
 ```
-gunicorn systemTool.wsgi -w 3 -t 180 --log-file=/path/to/gunicorn.log -b 127.0.0.1:8181
+gunicorn systemTool.wsgi -w 3 -t 1000 --log-file=/path/to/gunicorn.log -b 127.0.0.1:8181
 ```
 
 Nginx config for our virtual host (replace PATH where needed):
@@ -44,8 +44,8 @@ Nginx config for our virtual host (replace PATH where needed):
 ```
 server {
         listen 80;
-        client_max_body_size 10M;
-        server_name gt-parser-contacts.ihptru.net;
+        client_max_body_size 100M;
+        server_name gtpc.ihptru.net;
         access_log /path/to/access.log;
         error_log /path/to/error.log;
 
@@ -68,8 +68,8 @@ server {
                 proxy_redirect off;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Scheme $scheme;
-                proxy_connect_timeout 10;
-                proxy_read_timeout 120;
+                proxy_connect_timeout 30;
+                proxy_read_timeout 1000;
                 proxy_pass http://127.0.0.1:8181/;
         }
 }
