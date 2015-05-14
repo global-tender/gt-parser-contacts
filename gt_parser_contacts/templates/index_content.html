@@ -1,12 +1,26 @@
 <div class="content-padding">
 	<h2>Глобал-Тендер: Контакты организаций</h2>
+
+	{% if errors %}
+		{% for error in errors %}
+			<span class="red">{{ error }}</span><br />
+		{% endfor %}
+	{% endif %}
+
+	{% if pages_errors %}
+		{% for error in pages_errors %}
+			<span class="red">{{ error }}</span><br />
+		{% endfor %}
+	{% endif %}
+
+	{% if contact_errors %}
+		{% for error in contact_errors %}
+			<span class="red">{{ error }}</span><br />
+		{% endfor %}
+	{% endif %}
+
 	{% if not request.user.is_authenticated %}
 		<p>Для продолжения работы необходима авторизация:</p>
-		{% if errors %}
-			{% for error in errors %}
-				<span class="red">{{ error }}</span><br />
-			{% endfor %}
-		{% endif %}
 		<div>
 			<form method="POST" action="/" class="auth-form">
 				<label>Имя пользователя: </label><input type="text" name="username"><br />
@@ -20,11 +34,6 @@
 		</div>
 	{% else %}
 		{% if regions %}
-			{% if errors %}
-				{% for error in errors %}
-					<span class="red">{{ error }}</span><br />
-				{% endfor %}
-			{% else %}
 				<form name="regions" method="POST" action="/">
 					<h3>Регион:</h3>
 					<select name="region">
@@ -47,25 +56,15 @@
 		{% endif %}
 
 		{% if xlsx_file %}
-			{% if errors %}
-				{% for error in errors %}
-					<span class="red">{{ error }}</span><br />
-				{% endfor %}
-			{% elif pages_errors %}
-				{% for error in pages_errors %}
-					<span class="red">{{ error }}</span><br />
-				{% endfor %}
-			{% elif contact_errors %}
-				{% for error in contact_errors %}
-					<span class="red">{{ error }}</span><br />
-				{% endfor %}
-			{% elif xlsx_errors %}
+
+			{% if xlsx_errors %}
 				{% for error in xlsx_errors %}
 					<span class="red">{{ error }}</span><br />
 				{% endfor %}
 			{% else %}
 				<p><a href="/static/xlsx/{{xlsx_file}}">Скачать XLSX файл с контактами</a></p>
 			{% endif %}
+
 		{% endif %}
 		<br /><br /><a href="/clear/">Сброс</a>
 		<br /><br /><a href="/logout/">Выйти</a>
