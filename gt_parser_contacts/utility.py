@@ -9,6 +9,7 @@ import random, string
 # First step, waiting user choice: request list of available regions
 def getRegionList():
 	errors = []
+	regions = []
 	url = 'http://www.zakupki.gov.ru/epz/organization/organization/extended/search/form.html'
 	try:
 		opener = urllib2.build_opener()
@@ -16,12 +17,11 @@ def getRegionList():
 		stream = opener.open(url).read().decode('utf-8')
 	except:
 		errors.append(u'Ошибка, повторите позже. Debug info: step 0 (list of regions)')
+		return regions, errors
 
 	stream = stream.split('manySelect_regions')[1].split('bankDetails')[0]
 
 	soup = BeautifulSoup(stream)
-
-	regions = []
 
 	for li in soup.find_all('li'):
 		for input_v in li.find_all('input'):
