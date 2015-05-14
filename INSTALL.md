@@ -5,6 +5,7 @@ python3
 python-pip
 python3-pip
 pip3 install XlsxWriter
+python-dev
 ```
 
 ### Set up virtualenv, ex (using virtualenvwrapper):
