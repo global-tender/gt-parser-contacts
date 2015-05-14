@@ -34,25 +34,24 @@
 		</div>
 	{% else %}
 		{% if regions %}
-				<form name="regions" method="POST" action="/">
-					<h3>Регион:</h3>
-					<select name="region">
-						{% for region,code in regions %}
-							<option value="{{ code }}" name="region_val">{{ region }}</option>
-						{% endfor %}
-					</select>
+			<form name="regions" method="POST" action="/">
+				<h3>Регион:</h3>
+				<select name="region">
+					{% for region,code in regions %}
+						<option value="{{ code }}" name="region_val">{{ region }}</option>
+					{% endfor %}
+				</select>
 
-					<h3>ФЗ:</h3>
-					<select name="fz" class="fz">
-						<option value="FZ_223" name="fz_val">№ 223-ФЗ</option>
-						<option value="FZ_94" name="fz_val">№ 44-ФЗ (94-ФЗ)</option>
-						<option value="EVERYWHERE" name="fz_val">№ 44-ФЗ (94-ФЗ) и № 223-ФЗ</option>
-					</select>
-					<br />
-					<input type="submit" value="Получить контакты организаций" name="request_contacts_of_region" class='submit_org_list'>
-				</form>
-				<div class="waiting"></div>
-			{% endif %}
+				<h3>ФЗ:</h3>
+				<select name="fz" class="fz">
+					<option value="FZ_223" name="fz_val">№ 223-ФЗ</option>
+					<option value="FZ_94" name="fz_val">№ 44-ФЗ (94-ФЗ)</option>
+					<option value="EVERYWHERE" name="fz_val">№ 44-ФЗ (94-ФЗ) и № 223-ФЗ</option>
+				</select>
+				<br />
+				<input type="submit" value="Получить контакты организаций" name="request_contacts_of_region" class='submit_org_list'>
+			</form>
+			<div class="waiting"></div>
 		{% endif %}
 
 		{% if xlsx_file %}
