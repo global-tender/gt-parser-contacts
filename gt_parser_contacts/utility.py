@@ -75,7 +75,7 @@ def getCompanyList(fz, region, pageNumber=1, perPage=10):
 	stream, kt = strm(kt)
 
 	if stream == None:
-		errors.append(u'Ошибка получения детальной страницы организации: %s, %s', (region, fz))
+		errors.append(u'Ошибка получения детальной страницы организации: %s, %s' % (region, fz))
 
 	soup = BeautifulSoup(stream)
 
