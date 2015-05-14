@@ -27,10 +27,10 @@ def index(request):
 	xlsx_file = None
 
 	accessible = True
-	try:
-		st = urllib2.urlopen('http://zakupki.gov.ru/223/ppa/public/organization/organization.html').read()
-	except:
-		accessible = False
+	# try:
+	# 	st = urllib2.urlopen('http://zakupki.gov.ru/223/ppa/public/organization/organization.html').read()
+	# except:
+	# 	accessible = False
 
 	if request.POST.get('username', "").strip() != "" and request.POST.get('password', "").strip() != "":
 		username = request.POST['username']

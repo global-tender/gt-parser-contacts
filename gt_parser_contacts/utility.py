@@ -94,15 +94,15 @@ def getCompanyList(fz, region, pageNumber=1, perPage=10):
 
 			onclick = item.get('onclick')
 			if onclick:
-				found_http = re.findall('(http.*)\',', onclick)
+				found_http = re.findall('\'(http.*)\'', onclick)
 				if found_http:
-					for http_link in found_http:
+					for http_link in found_http[0].split("', '"):
 						if fz == "FZ_223" or fz == "EVERYWHERE":
 							if '/223/' in http_link:
 								link = http_link
 								break
 						if fz == "FZ_94":
-							if '/pgz/' not in http_link:
+							if '/pgz/' in http_link:
 								link = http_link
 								break
 
