@@ -16,8 +16,8 @@ $ pip install virtualenvwrapper
 $ export WORKON_HOME=~/Envs
 $ mkdir -p $WORKON_HOME
 $ source /usr/local/bin/virtualenvwrapper.sh
-$ mkvirtualenv --system-site-packages gt_parser_contacts
-$ workon gt_parser_contacts
+$ mkvirtualenv --system-site-packages zakupki-org-list
+$ workon zakupki-org-list
 
 # enter repository root directory and install other required python packages:
 $ pip install -r requirements.txt
@@ -45,7 +45,7 @@ Nginx config for our virtual host (replace PATH where needed):
 server {
         listen 80;
         client_max_body_size 100M;
-        server_name gtpc.ihptru.net;
+        server_name zakupki-org-list.ihptru.net;
         access_log /path/to/access.log;
         error_log /path/to/error.log;
 

@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, Http404
 from django.views.decorators.csrf import csrf_exempt
 
-from gt_parser_contacts import utility
+from org_manager import utility
 
 @csrf_exempt
 def index(request):

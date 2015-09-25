@@ -5,5 +5,5 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 	url(r'^admin/', include(admin.site.urls)),
-	url(r'^', include('gt_parser_contacts.urls')),
+	url(r'^', include('org_manager.urls')),
 )
