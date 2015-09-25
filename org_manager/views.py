@@ -80,13 +80,13 @@ def index(request):
 				return ''.join(random.choice(string.lowercase) for i in range(length))
 
 			json_obj = json.dumps(contacts, indent=4)
-			fn = os.getcwd() + os.sep + 'gt_parser_contacts/static/json/' + t + randomword(5) + '.json'
+			fn = os.getcwd() + os.sep + 'org_manager/static/json/' + t + randomword(5) + '.json'
 			fo = open(fn, "w")
 			fo.write(json_obj)
 			fo.close()
 
 			# Process json file with python3
-			script = os.getcwd() + os.sep + 'gt_parser_contacts/scripts/proc_contacts.py'
+			script = os.getcwd() + os.sep + 'org_manager/scripts/proc_contacts.py'
 			command = "python3 %s %s" % (script, fn)
 			proc = Popen(command.split(), stdout=PIPE).communicate()
 

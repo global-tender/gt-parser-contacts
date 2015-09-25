@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url, include
 from django.http import StreamingHttpResponse
 
-from gt_parser_contacts import views
+from org_manager import views
 
 urlpatterns = patterns('',
 	url(r'^$', views.index, name='index'),

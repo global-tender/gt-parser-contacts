@@ -1,5 +1,5 @@
 """
-WSGI config for gt_parser_contacts project.
+WSGI config for zakupki-org-list project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

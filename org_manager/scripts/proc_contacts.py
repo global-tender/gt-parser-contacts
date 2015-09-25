@@ -16,7 +16,7 @@ def createXLSX(contacts):
 	t = time.strftime( '%Y-%m-%dT%H-%M-%S', t )
 
 	filename = t + '_' + randomword(10) + '.xlsx'
-	fullpath = os.getcwd() + os.sep + 'gt_parser_contacts/static/xlsx/' + filename
+	fullpath = os.getcwd() + os.sep + 'org_manager/static/xlsx/' + filename
 
 	workbook = xlsxwriter.Workbook(fullpath)
 	worksheet = workbook.add_worksheet()
