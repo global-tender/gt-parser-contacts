@@ -44,3 +44,12 @@ class Contacts_44_FZ(models.Model):
 	address             = models.CharField(max_length=1000)
 	company_url         = models.CharField(max_length=1000)
 	date_modified       = models.DateTimeField('date modified')
+
+class Regions(models.Model):
+
+	class Meta:
+		verbose_name = 'Region'
+
+	region_name         = models.CharField(max_length=1000)
+	date_completed      = models.DateTimeField('date completed')
+	date_checked        = models.DateTimeField('date checked')
