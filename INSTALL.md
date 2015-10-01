@@ -74,3 +74,9 @@ server {
         }
 }
 ```
+
+### Setup cron task for user which run site:
+
+WORKON_HOME=~/Envs
+
+0 0 * * 5 source /usr/local/bin/virtualenvwrapper.sh && workon zakupki-org-list && cd <full path to repository root directory> && python manage.py flow
