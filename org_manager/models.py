@@ -6,7 +6,6 @@ class Organizations(models.Model):
 		verbose_name = 'Organization'
 
 	org_name            = models.CharField(max_length=1000)
-	org_url             = models.CharField(max_length=1000)
 	org_region          = models.CharField(max_length=1000)
 	org_level           = models.CharField(max_length=1000)
 	org_powers          = models.CharField(max_length=1000)
@@ -21,13 +20,14 @@ class Contacts_223_FZ(models.Model):
 		verbose_name = 'Contacts_223_FZ'
 
 	org_id              = models.IntegerField(default=0)
-	email_1             = models.CharField(max_length=1000)
-	email_2             = models.CharField(max_length=1000)
-	fio                 = models.CharField(max_length=1000)
-	phone               = models.CharField(max_length=1000)
-	fax                 = models.CharField(max_length=1000)
-	address             = models.CharField(max_length=1000)
-	company_url         = models.CharField(max_length=1000)
+	org_url             = models.CharField(max_length=1000)
+	email_1             = models.CharField(max_length=1000, blank=True)
+	email_2             = models.CharField(max_length=1000, blank=True)
+	fio                 = models.CharField(max_length=1000, blank=True)
+	phone               = models.CharField(max_length=1000, blank=True)
+	fax                 = models.CharField(max_length=1000, blank=True)
+	address             = models.CharField(max_length=1000, blank=True)
+	company_url         = models.CharField(max_length=1000, blank=True)
 	date_modified       = models.DateTimeField('date modified')
 
 class Contacts_44_FZ(models.Model):
@@ -36,13 +36,14 @@ class Contacts_44_FZ(models.Model):
 		verbose_name = 'Contacts_44_FZ'
 
 	org_id              = models.IntegerField(default=0)
-	email_1             = models.CharField(max_length=1000)
-	email_2             = models.CharField(max_length=1000)
-	fio                 = models.CharField(max_length=1000)
-	phone               = models.CharField(max_length=1000)
-	fax                 = models.CharField(max_length=1000)
-	address             = models.CharField(max_length=1000)
-	company_url         = models.CharField(max_length=1000)
+	org_url             = models.CharField(max_length=1000)
+	email_1             = models.CharField(max_length=1000, blank=True)
+	email_2             = models.CharField(max_length=1000, blank=True)
+	fio                 = models.CharField(max_length=1000, blank=True)
+	phone               = models.CharField(max_length=1000, blank=True)
+	fax                 = models.CharField(max_length=1000, blank=True)
+	address             = models.CharField(max_length=1000, blank=True)
+	company_url         = models.CharField(max_length=1000, blank=True)
 	date_modified       = models.DateTimeField('date modified')
 
 class Regions(models.Model):
@@ -51,5 +52,6 @@ class Regions(models.Model):
 		verbose_name = 'Region'
 
 	region_name         = models.CharField(max_length=1000)
-	date_completed      = models.DateTimeField('date completed')
-	date_checked        = models.DateTimeField('date checked')
+	region_code         = models.CharField(max_length=1000)
+	date_completed      = models.DateTimeField('date completed', null=True, blank=True)
+	date_checked        = models.DateTimeField('date checked', null=True, blank=True)
