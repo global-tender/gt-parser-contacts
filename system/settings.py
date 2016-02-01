@@ -1,5 +1,5 @@
 """
-Django settings for zakupki-org-list project.
+Django settings for zakupki.global-tender.ru project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -24,7 +24,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 SITE_ID = 1
 
@@ -49,9 +49,9 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'systemTool.urls'
+ROOT_URLCONF = 'system.urls'
 
-WSGI_APPLICATION = 'systemTool.wsgi.application'
+WSGI_APPLICATION = 'system.wsgi.application'
 
 
 # Database

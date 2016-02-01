@@ -1,5 +1,5 @@
 """
-WSGI config for zakupki-org-list project.
+WSGI config for zakupki.global-tender.ru project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(BASE_DIR)
 os.chdir(BASE_DIR)
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "systemTool.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "system.settings")
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
