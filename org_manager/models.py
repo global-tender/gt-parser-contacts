@@ -5,6 +5,9 @@ class Organizations(models.Model):
 	class Meta:
 		verbose_name = 'Organization'
 
+	def __unicode__(self):
+		return u'' + str(self.id) + '  ' + self.org_name
+
 	org_name            = models.CharField(max_length=1000)
 	org_region          = models.CharField(max_length=1000)
 	org_level           = models.CharField(max_length=1000)
@@ -19,7 +22,10 @@ class Contacts_223_FZ(models.Model):
 	class Meta:
 		verbose_name = 'Contacts_223_FZ'
 
-	org_id              = models.IntegerField(default=0)
+	def __unicode__(self):
+		return u'' + str(self.id) + '  org_id: ' + str(self.org_id.id)
+
+	org_id              = models.ForeignKey(Organizations)
 	org_url             = models.CharField(max_length=1000)
 	email_1             = models.CharField(max_length=1000, blank=True)
 	email_2             = models.CharField(max_length=1000, blank=True)
@@ -28,6 +34,7 @@ class Contacts_223_FZ(models.Model):
 	fax                 = models.CharField(max_length=1000, blank=True)
 	address             = models.CharField(max_length=1000, blank=True)
 	company_url         = models.CharField(max_length=1000, blank=True)
+	additional_contact  = models.CharField(max_length=1000, blank=True) # info: empty for 223fz
 	date_modified       = models.DateTimeField('date modified')
 
 class Contacts_44_FZ(models.Model):
@@ -35,7 +42,10 @@ class Contacts_44_FZ(models.Model):
 	class Meta:
 		verbose_name = 'Contacts_44_FZ'
 
-	org_id              = models.IntegerField(default=0)
+	def __unicode__(self):
+		return u'' + str(self.id) + '  org_id: ' + str(self.org_id.id)
+
+	org_id              = models.ForeignKey(Organizations)
 	org_url             = models.CharField(max_length=1000)
 	email_1             = models.CharField(max_length=1000, blank=True)
 	email_2             = models.CharField(max_length=1000, blank=True)
@@ -44,12 +54,16 @@ class Contacts_44_FZ(models.Model):
 	fax                 = models.CharField(max_length=1000, blank=True)
 	address             = models.CharField(max_length=1000, blank=True)
 	company_url         = models.CharField(max_length=1000, blank=True)
+	additional_contact  = models.CharField(max_length=1000, blank=True)
 	date_modified       = models.DateTimeField('date modified')
 
 class Regions(models.Model):
 
 	class Meta:
 		verbose_name = 'Region'
+
+	def __unicode__(self):
+		return u'' + self.region_name + '  id: ' + str(self.id)
 
 	region_name         = models.CharField(max_length=1000)
 	region_code         = models.CharField(max_length=1000)

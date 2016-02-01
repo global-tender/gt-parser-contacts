@@ -21,7 +21,7 @@ def getRegionList():
 
 	stream = stream.split('manySelect_regions')[1].split('bankDetails')[0]
 
-	soup = BeautifulSoup(stream)
+	soup = BeautifulSoup(stream, 'html.parser')
 
 	for li in soup.find_all('li'):
 		for input_v in li.find_all('input'):
@@ -39,7 +39,7 @@ def getAmountPages(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPer
 	errors = []
 	pages = 1
 
-	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&organizationSimpleSorting=PO_NAZVANIYU' % (
+	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&organizationSimpleSorting=PO_NAZVANIYU' % (
 		placeOfSearch, custLev, regionIds, pageNumber, recordsPerPage)
 
 	try:
@@ -49,6 +49,14 @@ def getAmountPages(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPer
 	except:
 		errors.append(u'Ошибка, повторите позже. Debug info: step 1 (pages)')
 
+	if u'Поиск не дал результатов' in stream:
+		pages = 0
+		return pages, errors
+
+	if 'javascript:goToPage' not in stream:
+		pages = 1
+		return pages, errors
+
 	data = re.findall( '.*<a href="javascript:goToPage\(.*\)">(.*)</a>.*', stream.split(u'<li>из</li>')[1].split('<li class="rightArrow">')[0] )
 	if data:
 		pages = data[0]
@@ -57,7 +65,7 @@ def getAmountPages(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPer
 def getCompanyList(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPerPage='_10'):
 	errors = []
 	organization_links = {}
-	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&organizationSimpleSorting=PO_NAZVANIYU' % (
+	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&organizationSimpleSorting=PO_NAZVANIYU' % (
 		placeOfSearch, custLev, regionIds, pageNumber, recordsPerPage)
 
 	kt = 0
@@ -79,7 +87,7 @@ def getCompanyList(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPer
 		errors.append(u'Ошибка получения детальной страницы организации: %s, %s' % (regionIds, placeOfSearch))
 		return organization_links, errors
 
-	soup = BeautifulSoup(stream)
+	soup = BeautifulSoup(stream, 'html.parser')
 
 	orgs = []
 
@@ -98,11 +106,11 @@ def getCompanyList(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPer
 				found_http = re.findall('\'(http.*)\'', onclick)
 				if found_http:
 					for http_link in found_http[0].split("', '"):
-						if fz == "FZ_223" or fz == "EVERYWHERE":
+						if placeOfSearch == "FZ_223" or placeOfSearch == "EVERYWHERE":
 							if '/223/' in http_link:
 								link = http_link
 								break
-						if fz == "FZ_94":
+						if placeOfSearch == "FZ_94":
 							if '/pgz/' in http_link:
 								link = http_link
 								break
@@ -116,8 +124,8 @@ def getOrganizationContacts(url, name):
 	errors = []
 
 	contacts = {}
-	contacts['Имя организации'] = name
-	contacts['URL'] = url
+	contacts[u'Имя организации'] = unicode(name)
+	contacts[u'URL'] = url
 
 	try:
 		kt = 0
@@ -141,31 +149,31 @@ def getOrganizationContacts(url, name):
 		if '/223/' in url:
 			contacts['ФЗ'] = '№ 223-ФЗ'
 			info = stream.split(u'Контактная информация')[1].split('noticeTabBoxWrapper')[1]
-			soup = BeautifulSoup(info)
+			soup = BeautifulSoup(info, 'html.parser')
 
 			for tr in soup.find_all('tr'):
 				f_key = ''
 				for td in tr.find_all('td'):
 					if f_key == '':
-						f_key = td.text.strip()
+						f_key = unicode(td.text.strip())
 					else:
-						contacts[f_key] = td.text.strip()
+						contacts[f_key] = unicode(td.text.strip())
 						f_key = ''
 						break
 		if '/pgz/' in url:
-			contacts['ФЗ'] = '№ 44-ФЗ (94-ФЗ)'
+			contacts[u'ФЗ'] = u'№ 44-ФЗ (94-ФЗ)'
 			info = stream.split(u'Контактная информация')[1].split(u'Часовая зона')[0]
-			soup = BeautifulSoup(info)
+			soup = BeautifulSoup(info, 'html.parser')
 
 			f_key = ''
 			for span in soup.find_all('span'):
 				if f_key == '':
-					f_key = span.text.strip()
+					f_key = unicode(span.text.strip())
 				else:
-					contacts[f_key] = span.text.strip()
+					contacts[f_key] = unicode(span.text.strip())
 					f_key = ''
 					continue
 	except Exception as e:
-		errors.append(u"Не удалось получить контактную информацию по организации: %s (%s)" % (url, e))
+		errors.append(u"Не удалось получить контактную информацию по организации, возможно не зарегистрирована или заблокирована: %s (%s)" % (url, e))
 
 	return contacts, errors
