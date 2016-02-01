@@ -1,4 +1,2 @@
 db/*.sqlite3
 *.pyc
-org_manager/static/xlsx/*.xlsx
-org_manager/static/json/*.json
