@@ -10,8 +10,13 @@ class Organizations(models.Model):
 
 	org_name            = models.CharField(max_length=1000)
 	org_region          = models.CharField(max_length=1000)
-	org_level           = models.CharField(max_length=1000)
-	org_powers          = models.CharField(max_length=1000)
+	
+	org_level_44        = models.CharField(max_length=1000, default="", blank=True)
+	org_level_223       = models.CharField(max_length=1000, default="", blank=True)
+
+	org_powers_44       = models.CharField(max_length=1000, default="", blank=True)
+	org_powers_223      = models.CharField(max_length=1000, default="", blank=True)
+
 	works_with_44       = models.BooleanField(default=False)
 	works_with_223      = models.BooleanField(default=False)
 	date_modified       = models.DateTimeField('date modified')

@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import time
 import xlsxwriter
 import random, string
+from fake_useragent import UserAgent
 
 # First step, waiting user choice: request list of available regions
 def getRegionList():
@@ -12,8 +13,9 @@ def getRegionList():
 	regions = []
 	url = 'http://www.zakupki.gov.ru/epz/organization/organization/extended/search/form.html'
 	try:
+		ua = UserAgent()
 		opener = urllib2.build_opener()
-		opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+		opener.addheaders = [('User-agent', ua.random)]
 		stream = opener.open(url).read().decode('utf-8')
 	except:
 		errors.append(u'Ошибка, повторите позже. Debug info: step 0 (list of regions)')
@@ -35,19 +37,23 @@ def getRegionList():
 #	2. Get oragnizations detail page URLs from all pages
 #	3. Get detail information of all organizations
 
-def getAmountPages(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPerPage='_10'):
+def getAmountPages(regionIds, placeOfSearch, custLev, power, sorting_type, sortDirection, pageNumber='1', recordsPerPage='_10'):
 	errors = []
 	pages = 1
+	stream = False
 
-	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&organizationSimpleSorting=PO_NAZVANIYU' % (
-		placeOfSearch, custLev, regionIds, pageNumber, recordsPerPage)
+	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&organizationRoleList=%s&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&sortDirection=%s&organizationSimpleSorting=%s' % (
+		placeOfSearch, custLev, power, regionIds, pageNumber, recordsPerPage, sortDirection, sorting_type)
 
 	try:
+		time.sleep(1)
+		ua = UserAgent()
 		opener = urllib2.build_opener()
-		opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+		opener.addheaders = [('User-agent', ua.random)]
 		stream = opener.open(url).read().decode('utf-8')
 	except:
 		errors.append(u'Ошибка, повторите позже. Debug info: step 1 (pages)')
+		return 0, errors
 
 	if u'Поиск не дал результатов' in stream:
 		pages = 0
@@ -62,11 +68,11 @@ def getAmountPages(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPer
 		pages = data[0]
 	return int(pages), errors
 
-def getCompanyList(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPerPage='_10'):
+def getCompanyList(regionIds, placeOfSearch, custLev, power, sorting_type, sortDirection, pageNumber='1', recordsPerPage='_10'):
 	errors = []
 	organization_links = {}
-	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&organizationSimpleSorting=PO_NAZVANIYU' % (
-		placeOfSearch, custLev, regionIds, pageNumber, recordsPerPage)
+	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&organizationRoleList=%s&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&sortDirection=%s&organizationSimpleSorting=%s' % (
+		placeOfSearch, custLev, power, regionIds, pageNumber, recordsPerPage, sortDirection, sorting_type)
 
 	kt = 0
 	def strm(kt):
@@ -74,8 +80,9 @@ def getCompanyList(regionIds, placeOfSearch, custLev, pageNumber='1', recordsPer
 		if kt == 3:
 			return None, kt
 		try:
+			ua = UserAgent()
 			opener = urllib2.build_opener()
-			opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+			opener.addheaders = [('User-agent', ua.random)]
 			stream = opener.open(url).read().decode('utf-8')
 			return stream, kt
 		except:
@@ -134,8 +141,9 @@ def getOrganizationContacts(url, name):
 			if kt == 3:
 				return None, kt
 			try:
+				ua = UserAgent()
 				opener = urllib2.build_opener()
-				opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+				opener.addheaders = [('User-agent', ua.random)]
 				stream = opener.open(url).read().decode('utf-8')
 				return stream, kt
 			except:
