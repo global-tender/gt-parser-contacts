@@ -10,6 +10,7 @@ django-allauth==0.19.1
 django-registration==1.0
 dnspython==1.11.1
 docutils==0.8.1
+fake-useragent==0.0.8
 fpconst==0.7.2
 gunicorn==19.3.0
 html5lib==0.999
