@@ -46,7 +46,8 @@ def getAmountPages(regionIds, placeOfSearch, custLev, power, sorting_type, sortD
 		placeOfSearch, custLev, power, regionIds, pageNumber, recordsPerPage, sortDirection, sorting_type)
 
 	try:
-		time.sleep(1)
+		delays = [3,4,5,6]
+		time.sleep(random.choice(delays))
 		ua = UserAgent()
 		opener = urllib2.build_opener()
 		opener.addheaders = [('User-agent', ua.random)]
@@ -86,7 +87,8 @@ def getCompanyList(regionIds, placeOfSearch, custLev, power, sorting_type, sortD
 			stream = opener.open(url).read().decode('utf-8')
 			return stream, kt
 		except:
-			time.sleep(5)
+			delays = [3,4,5,6]
+			time.sleep(random.choice(delays))
 			return strm(kt)
 	stream, kt = strm(kt)
 
@@ -141,13 +143,16 @@ def getOrganizationContacts(url, name):
 			if kt == 3:
 				return None, kt
 			try:
+				delays = [3,4,5,6]
+				time.sleep(random.choice(delays))
 				ua = UserAgent()
 				opener = urllib2.build_opener()
 				opener.addheaders = [('User-agent', ua.random)]
 				stream = opener.open(url).read().decode('utf-8')
 				return stream, kt
 			except:
-				time.sleep(5)
+				delays = [3,4,5,6]
+				time.sleep(random.choice(delays))
 				return strm(kt)
 		stream, kt = strm(kt)
 
