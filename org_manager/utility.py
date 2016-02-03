@@ -3,8 +3,7 @@ import urllib2
 import re
 from bs4 import BeautifulSoup
 import time
-import xlsxwriter
-import random, string
+import random
 from fake_useragent import UserAgent
 
 # First step, waiting user choice: request list of available regions
@@ -93,7 +92,7 @@ def getCompanyList(regionIds, placeOfSearch, custLev, power, sorting_type, sortD
 	stream, kt = strm(kt)
 
 	if stream == None:
-		errors.append(u'Ошибка получения детальной страницы организации: %s, %s' % (regionIds, placeOfSearch))
+		errors.append(u'Ошибка получения списка организаций: %s, %s' % (regionIds, placeOfSearch))
 		return organization_links, errors
 
 	soup = BeautifulSoup(stream, 'html.parser')

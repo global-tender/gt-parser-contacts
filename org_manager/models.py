@@ -6,7 +6,7 @@ class Organizations(models.Model):
 		verbose_name = 'Organization'
 
 	def __unicode__(self):
-		return u'' + str(self.id) + '  ' + self.org_name
+		return u'' + str(self.id) + ':  ' + self.org_name
 
 	org_name            = models.CharField(max_length=1000)
 	org_region          = models.CharField(max_length=1000)
@@ -28,7 +28,7 @@ class Contacts_223_FZ(models.Model):
 		verbose_name = 'Contacts_223_FZ'
 
 	def __unicode__(self):
-		return u'' + str(self.id) + '  org_id: ' + str(self.org_id.id)
+		return u'id: ' + str(self.id) + ';  org_id: ' + str(self.org_id.id) + ';  org_name: ' + self.org_id.org_name
 
 	org_id              = models.ForeignKey(Organizations)
 	org_url             = models.CharField(max_length=1000)
@@ -48,7 +48,7 @@ class Contacts_44_FZ(models.Model):
 		verbose_name = 'Contacts_44_FZ'
 
 	def __unicode__(self):
-		return u'' + str(self.id) + '  org_id: ' + str(self.org_id.id)
+		return u'id: ' + str(self.id) + ';  org_id: ' + str(self.org_id.id) + ';  org_name: ' + self.org_id.org_name
 
 	org_id              = models.ForeignKey(Organizations)
 	org_url             = models.CharField(max_length=1000)
@@ -68,7 +68,7 @@ class Regions(models.Model):
 		verbose_name = 'Region'
 
 	def __unicode__(self):
-		return u'' + self.region_name + '  id: ' + str(self.id)
+		return u'' + self.region_name + ';  id: ' + str(self.id)
 
 	region_name         = models.CharField(max_length=1000)
 	region_code         = models.CharField(max_length=1000)
