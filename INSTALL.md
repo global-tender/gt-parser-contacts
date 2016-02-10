@@ -30,16 +30,19 @@ $ pip install -r requirements.txt
 ```
 
 ### Finish work with django
- * Initialize database (this will create all tables). You'll get a prompt asking you if you'd like to create a superuser account for the authentication system. Go ahead and do that:
+ * Initialize database:
 
 ```
-python manage.py syncdb
+python manage.py makemigrations
+python manage.py makemigration org_manager
+python manage.py migrate
+python manage.py migrate org_manager
 ```
 
 ### Setup Production (using nginx + gunicorn)
 All-sufficient guide: http://goodcode.io/blog/django-nginx-gunicorn/
 
-Running gunicorn (WSGI HTTP Server) this way (3 instances, max timeout 180 seconds):
+Running gunicorn (WSGI HTTP Server) this way (3 instances, max timeout 1000 seconds):
 
 ```
 gunicorn system.wsgi -w 3 -t 1000 --log-file=/path/to/gunicorn.log -b 127.0.0.1:8181
@@ -55,19 +58,13 @@ server {
         access_log /path/to/access.log;
         error_log /path/to/error.log;
 
-        root /path/to/our/django/site/;
+        root /path/to/our/django/site/app_name/;
+
         location /static/ { # STATIC_URL
                 alias /path/to/our/primary/application/static/; # STATIC_ROOT
                 expires 30d;
         }
 
-        location /media/ { # MEDIA_URL
-                alias /path/to/our/primary/application/static/; # MEDIA_ROOT
-                expires 30d;
-         }
-        location /static/admin/ {
-                alias /usr/local/lib/python2.7/dist-packages/django/contrib/admin/static/admin/;
-        }
         location / {
                 proxy_pass_header Server;
                 proxy_set_header Host $http_host;
@@ -83,6 +80,7 @@ server {
 
 ### Setup cron task for user which run site:
 
+SHELL=/bin/bash
 WORKON_HOME=~/Envs
 
 0 0 * * 5 source /usr/local/bin/virtualenvwrapper.sh && workon zakupki && cd <full path to repository root directory> && python manage.py flow
