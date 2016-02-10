@@ -34,7 +34,7 @@ $ pip install -r requirements.txt
 
 ```
 python manage.py makemigrations
-python manage.py makemigration org_manager
+python manage.py makemigrations org_manager
 python manage.py migrate
 python manage.py migrate org_manager
 ```
@@ -80,7 +80,9 @@ server {
 
 ### Setup cron task for user which run site:
 
+```
 SHELL=/bin/bash
 WORKON_HOME=~/Envs
 
 0 0 * * 5 source /usr/local/bin/virtualenvwrapper.sh && workon zakupki && cd <full path to repository root directory> && python manage.py flow
+```
