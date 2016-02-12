@@ -45,7 +45,7 @@ def getAmountPages(regionIds, placeOfSearch, custLev, power, sorting_type, sortD
 		placeOfSearch, custLev, power, regionIds, pageNumber, recordsPerPage, sortDirection, sorting_type)
 
 	try:
-		delays = [15,20,25,30]
+		delays = [20,25,30,35]
 		time.sleep(random.choice(delays))
 		ua = UserAgent()
 		opener = urllib2.build_opener()
@@ -86,7 +86,7 @@ def getCompanyList(regionIds, placeOfSearch, custLev, power, sorting_type, sortD
 			stream = opener.open(url).read().decode('utf-8')
 			return stream, kt
 		except:
-			delays = [15,20,25,30]
+			delays = [20,25,30,35]
 			time.sleep(random.choice(delays))
 			return strm(kt)
 	stream, kt = strm(kt)
@@ -142,7 +142,7 @@ def getOrganizationContacts(url, name):
 			if kt == 3:
 				return None, kt
 			try:
-				delays = [15,20,25,30]
+				delays = [20,25,30,35]
 				time.sleep(random.choice(delays))
 				ua = UserAgent()
 				opener = urllib2.build_opener()
@@ -150,7 +150,7 @@ def getOrganizationContacts(url, name):
 				stream = opener.open(url).read().decode('utf-8')
 				return stream, kt
 			except:
-				delays = [15,20,25,30]
+				delays = [20,25,30,35]
 				time.sleep(random.choice(delays))
 				return strm(kt)
 		stream, kt = strm(kt)

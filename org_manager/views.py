@@ -109,8 +109,7 @@ def index(request):
 		'xlsx_errors': xlsx_errors,
 		'contact_errors': contact_errors,
 	}
-	context = RequestContext(request, template_args)
-	return StreamingHttpResponse(template.render(context))
+	return StreamingHttpResponse(template.render(template_args, request))
 
 def sign_out(request):
 	if request.user.is_authenticated():
