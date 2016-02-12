@@ -1,5 +1,4 @@
 beautifulsoup4==4.3.2
-bzr==2.6.0.dev2
 chardet==2.0.1
 colorama==0.2.5
 configobj==4.7.2
