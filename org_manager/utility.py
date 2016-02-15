@@ -44,16 +44,30 @@ def getAmountPages(regionIds, placeOfSearch, custLev, power, sorting_type, sortD
 	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&organizationRoleList=%s&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&sortDirection=%s&organizationSimpleSorting=%s' % (
 		placeOfSearch, custLev, power, regionIds, pageNumber, recordsPerPage, sortDirection, sorting_type)
 
-	try:
-		delays = [20,25,30,35]
-		time.sleep(random.choice(delays))
-		ua = UserAgent()
-		opener = urllib2.build_opener()
-		opener.addheaders = [('User-agent', ua.random)]
-		stream = opener.open(url).read().decode('utf-8')
-	except:
-		errors.append(u'Ошибка, повторите позже. Debug info: step 1 (pages)')
+	kt = 0
+	def strm(kt):
+		kt = kt + 1
+		if kt == 4:
+			return None, kt
+		try:
+			delays = [20,25,30,35]
+			time.sleep(random.choice(delays))
+			
+			ua = UserAgent()
+			opener = urllib2.build_opener()
+			opener.addheaders = [('User-agent', ua.random)]
+			stream = opener.open(url).read().decode('utf-8')
+			return stream, kt
+		except:
+			delays = [120,125,130,135]
+			time.sleep(random.choice(delays))
+			return strm(kt)
+	stream, kt = strm(kt)
+
+	if stream == None:
+		errors.append(u'Ошибка получения количества страниц (pages) по региону: %s, %s' % (regionIds, placeOfSearch))
 		return 0, errors
+
 
 	if u'Поиск не дал результатов' in stream:
 		pages = 0
@@ -77,7 +91,7 @@ def getCompanyList(regionIds, placeOfSearch, custLev, power, sorting_type, sortD
 	kt = 0
 	def strm(kt):
 		kt = kt + 1
-		if kt == 3:
+		if kt == 4:
 			return None, kt
 		try:
 			ua = UserAgent()
@@ -86,7 +100,7 @@ def getCompanyList(regionIds, placeOfSearch, custLev, power, sorting_type, sortD
 			stream = opener.open(url).read().decode('utf-8')
 			return stream, kt
 		except:
-			delays = [20,25,30,35]
+			delays = [120,125,130,135]
 			time.sleep(random.choice(delays))
 			return strm(kt)
 	stream, kt = strm(kt)
@@ -139,7 +153,7 @@ def getOrganizationContacts(url, name):
 		kt = 0
 		def strm(kt):
 			kt = kt + 1
-			if kt == 3:
+			if kt == 4:
 				return None, kt
 			try:
 				delays = [20,25,30,35]
@@ -150,7 +164,7 @@ def getOrganizationContacts(url, name):
 				stream = opener.open(url).read().decode('utf-8')
 				return stream, kt
 			except:
-				delays = [20,25,30,35]
+				delays = [120,125,130,135]
 				time.sleep(random.choice(delays))
 				return strm(kt)
 		stream, kt = strm(kt)
