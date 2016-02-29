@@ -1,16 +1,13 @@
 
 ```
-Developed using Python 2.7, Django 1.9.1
+Developed using Python 2.7.3, Django 1.9.1
 Database is SQLite
 ```
 
 ### Requires:
 ```
 python2
-python3
 python-pip
-python3-pip
-pip3 install XlsxWriter
 python-dev
 ```
 
@@ -65,6 +62,10 @@ server {
                 expires 30d;
         }
 
+        location = /favicon.ico {
+                alias /path/to/our/primary/application/static/favicon.png;
+        }
+
         location / {
                 proxy_pass_header Server;
                 proxy_set_header Host $http_host;
@@ -78,11 +79,11 @@ server {
 }
 ```
 
-### Setup cron task for user which run site:
+### Setup cron task for user which run site (or run manually):
 
 ```
 SHELL=/bin/bash
 WORKON_HOME=~/Envs
 
-0 0 * * 5 source /usr/local/bin/virtualenvwrapper.sh && workon zakupki && cd <full path to repository root directory> && python manage.py flow
+* * * 6 * source /usr/local/bin/virtualenvwrapper.sh && workon zakupki && cd <full path to repository root directory> && python manage.py flow
 ```
