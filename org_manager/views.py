@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import json, time
-import random, string
+import string
 import os
-import ast
-from subprocess import Popen, PIPE
+import xlsxwriter
+import pytz
 
 from django.conf import settings
 from django.http import StreamingHttpResponse
@@ -12,25 +12,23 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, Http404
 from django.views.decorators.csrf import csrf_exempt
 
-from org_manager import utility
+from org_manager.models import Organizations
+from org_manager.models import Contacts_223_FZ
+from org_manager.models import Contacts_44_FZ
+from org_manager.models import Regions
+
 
 @csrf_exempt
 def index(request):
 	errors = []
-	pages_errors = []
-	contact_errors = []
-	xlsx_errors = []
-
-	regions = []
-	pages = 0
-	contacts = None
 	xlsx_file = None
+	regions = None
 
-	accessible = True
-	# try:
-	# 	st = urllib2.urlopen('http://zakupki.gov.ru/223/ppa/public/organization/organization.html').read()
-	# except:
-	# 	accessible = False
+	selected_region = None
+	selected_fz = None
+	selected_level = None
+	amount_orgs = 0
+
 
 	if request.POST.get('username', "").strip() != "" and request.POST.get('password', "").strip() != "":
 		username = request.POST['username']
@@ -46,68 +44,149 @@ def index(request):
 			errors.append("Неверное имя пользователя или пароль.")
 
 	if request.user.is_authenticated():
-		if request.POST.get('request_contacts_of_region', "").strip() == "":
-			regions, errors = utility.getRegionList()
-		else:
-			fz = request.POST.get('fz', "")
-			region = request.POST.get('region', "")
-			pageNumber = '1'
-			perPage = '10'
 
-			pages, pages_errors = utility.getAmountPages(fz, region, pageNumber, perPage)
+		if request.method == 'GET':
+			regions = Regions.objects.exclude(date_completed__isnull=True)
+
+		else: # POST
+			region_value = request.POST.get('region', '')
+			fz_value = request.POST.get('fz', '')
+			org_level_value = request.POST.get('org_level', '')
 
 
-			all_links = {}
+			if fz_value == 'FZ_223':
 
-			for page in range(pages):
-				pg = page+1
+				if org_level_value and org_level_value != 'any':
+					orgs = Organizations.objects.filter(org_region=region_value,works_with_223=True,org_level_223=org_level_value)
+				else:
+					orgs = Organizations.objects.filter(org_region=region_value,works_with_223=True)
 
-				res, errors = utility.getCompanyList(fz, region, pg, perPage)
+			else: #'FZ_94':
 
-				all_links = dict(list(all_links.items()) + list(res.items()))
+				if org_level_value and org_level_value != 'any':
+					orgs = Organizations.objects.filter(org_region=region_value,works_with_44=True,org_level_44=org_level_value)
+				else:
+					orgs = Organizations.objects.filter(org_region=region_value,works_with_44=True)
 
-			contacts = {}
-			for org_url, org_name in all_links.iteritems():
-				parsed_details, contact_errors = utility.getOrganizationContacts(org_url, org_name)
+			amount_orgs = len(orgs)
 
-				contacts[org_url] = parsed_details
+			selected_region = Regions.objects.filter(region_code=region_value).first()
 
-			# Generated dictionary to json file
+			custLev_list = {
+				'F': u'Федеральный уровень',
+				'S': u'Уровень субъекта РФ',
+				'M': u'Муниципальный уровень',
+				'NOT_FSM': u'Иное',
+				'any': u'Любой',
+			}
+
+			fz_list = {
+				'FZ_223': u'223-ФЗ',
+				'FZ_94': u'44-ФЗ',
+			}
+
+			selected_fz = fz_list[fz_value]
+			selected_level = custLev_list[org_level_value]
+
+			##############################
+			##############################
+			local_tz = pytz.timezone('Europe/Moscow')
 			t = time.localtime( time.time() )
 			t = time.strftime( '%Y-%m-%dT%H-%M-%S', t )
 
-			def randomword(length):
-				return ''.join(random.choice(string.lowercase) for i in range(length))
+			xlsx_file = 'zakupki_' + t + '.xlsx'
+			fullpath = os.getcwd() + os.sep + 'org_manager/static/xlsx/' + xlsx_file
 
-			json_obj = json.dumps(contacts, indent=4)
-			fn = os.getcwd() + os.sep + 'org_manager/static/json/' + t + randomword(5) + '.json'
-			fo = open(fn, "w")
-			fo.write(json_obj)
-			fo.close()
+			workbook = xlsxwriter.Workbook(fullpath)
+			worksheet = workbook.add_worksheet()
 
-			# Process json file with python3
-			script = os.getcwd() + os.sep + 'org_manager/scripts/proc_contacts.py'
-			command = "python3 %s %s" % (script, fn)
-			proc = Popen(command.split(), stdout=PIPE).communicate()
+			bold = workbook.add_format({'bold': True})
 
-			if proc[0] == "error":
-				xlsx_errors.append('Failed to create xlsx file.')
-			else:
-				xlsx_file = proc[0]
+
+			worksheet.write(0, 0, u"" + selected_region.region_name, bold)
+			worksheet.write(0, 1, u"" + selected_fz, bold)
+
+			worksheet.write(0, 3, u"Дата обновления контактов по региону:"),
+			worksheet.write(0, 4, str(selected_region.date_completed.replace(tzinfo=pytz.utc).astimezone(local_tz)).split('.')[0], bold)
+
+			worksheet.write(2, 0, u"Имя организации", bold)
+			worksheet.write(2, 1, u"ФЗ", bold)
+			worksheet.write(2, 2, u"Уровень организации", bold)
+
+			worksheet.write(2, 3, u"Контактное лицо", bold)
+			worksheet.write(2, 4, u"Телефон", bold)
+			worksheet.write(2, 5, u"Контактный E-Mail", bold)
+			worksheet.write(2, 6, u"Дополнительный E-Mail", bold)
+
+			worksheet.write(2, 7, u"Сайт организации", bold)
+
+			worksheet.write(2, 8, u"Факс", bold)
+			worksheet.write(2, 9, u"Почтовый адрес", bold)
+
+			worksheet.write(2, 10, u"Страница на zakupki.gov.ru", bold)
+
+			worksheet.write(2, 11, u"Дополнительные контакты", bold)
+			worksheet.write(2, 12, u"Дата получения контактов", bold)
+
+			worksheet.set_column(0, 0, 50)
+			worksheet.set_column(1, 1, 10)
+			worksheet.set_column(2, 2, 25)
+			worksheet.set_column(3, 3, 40)
+			worksheet.set_column(4, 4, 20)
+			worksheet.set_column(5, 5, 30)
+			worksheet.set_column(6, 6, 30)
+			worksheet.set_column(7, 7, 25)
+			worksheet.set_column(8, 8, 30)
+			worksheet.set_column(9, 9, 20)
+			worksheet.set_column(10, 10, 30)
+			worksheet.set_column(11, 11, 20)
+			worksheet.set_column(12, 12, 20)
+
+
+			row = 4
+			for org in orgs:
+
+				if fz_value == 'FZ_223':
+					contacts_obj = Contacts_223_FZ
+					custLev = org.org_level_223
+				elif fz_value == 'FZ_94':
+					contacts_obj = Contacts_44_FZ
+					custLev = org.org_level_44
+
+
+				contacts = contacts_obj.objects.filter(org_id=org.id).first()
+
+				worksheet.write(row, 0, u"" + org.org_name)
+				worksheet.write(row, 1, u"" + selected_fz)
+				worksheet.write(row, 2, u"" + custLev_list[custLev])
+				worksheet.write(row, 3, u"" + contacts.fio)
+				worksheet.write(row, 4, u"" + contacts.phone)
+				worksheet.write(row, 5, u"" + contacts.email_1)
+				worksheet.write(row, 6, u"" + contacts.email_2)
+				worksheet.write(row, 7, u"" + contacts.company_url)
+				worksheet.write(row, 8, u"" + contacts.fax)
+				worksheet.write(row, 9, u"" + contacts.address)
+				worksheet.write(row, 10, u"" + contacts.org_url)
+				worksheet.write(row, 11, u"" + contacts.additional_contact)
+				worksheet.write(row, 12, str(contacts.date_modified.replace(tzinfo=pytz.utc).astimezone(local_tz)).split('.')[0])
+
+				row = row + 1
+
+			worksheet.set_zoom(75)
+			workbook.close()
+
 
 	template = loader.get_template('index.html')
 	template_args = {
 		'content': 'index_content.html',
 		'request': request,
-		'title': '',
-		'accessible': accessible,
-		'regions': regions,
 		'errors': errors,
-		'pages': pages,
-		'pages_errors': pages_errors,
 		'xlsx_file': xlsx_file,
-		'xlsx_errors': xlsx_errors,
-		'contact_errors': contact_errors,
+		'regions': regions,
+		'selected_region': selected_region,
+		'selected_fz': selected_fz,
+		'selected_level': selected_level,
+		'amount_orgs': amount_orgs,
 	}
 	return StreamingHttpResponse(template.render(template_args, request))
 

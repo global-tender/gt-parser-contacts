@@ -1,5 +1,8 @@
-<div class="content-padding">
+
+<div class="container">
+
 	<h2>Глобал-Тендер: Контакты организаций</h2>
+
 
 	{% if errors %}
 		{% for error in errors %}
@@ -7,19 +10,10 @@
 		{% endfor %}
 	{% endif %}
 
-	{% if pages_errors %}
-		{% for error in pages_errors %}
-			<span class="red">{{ error }}</span><br />
-		{% endfor %}
-	{% endif %}
 
-	{% if contact_errors %}
-		{% for error in contact_errors %}
-			<span class="red">{{ error }}</span><br />
-		{% endfor %}
-	{% endif %}
 
 	{% if not request.user.is_authenticated %}
+
 		<p>Для продолжения работы необходима авторизация:</p>
 		<div>
 			<form method="POST" action="/" class="auth-form">
@@ -28,49 +22,68 @@
 				<input type="submit" value="Авторизоваться"><br />
 			</form>
 		</div>
-	{% elif not accessible %}
-		<div>
-			<span class="red">В разделе информации о размещении заказов на http://zakupki.gov.ru/ ведутся регламентные работы.</span>
-		</div>
+
 	{% else %}
-		{% if regions %}
-			<form name="regions" method="POST" action="/">
+
+		{% if request.method == 'GET' %}
+			<form name="filter" method="POST" action="/" class="filter-form">
+
 				<h3>Регион:</h3>
 				<select name="region">
-					{% for region,code in regions %}
-						<option value="{{ code }}" name="region_val">{{ region }}</option>
+					{% for region in regions %}
+						<option value="{{ region.region_code }}" name="region_value">{{ region.region_name }}</option>
 					{% endfor %}
 				</select>
 
 				<h3>ФЗ:</h3>
 				<select name="fz" class="fz">
-					<option value="FZ_223" name="fz_val">№ 223-ФЗ</option>
-					<option value="FZ_94" name="fz_val">№ 44-ФЗ (94-ФЗ)</option>
-					<option value="EVERYWHERE" name="fz_val">№ 44-ФЗ (94-ФЗ) и № 223-ФЗ</option>
+					<option value="FZ_223" name="fz_value">№ 223-ФЗ</option>
+					<option value="FZ_94" name="fz_value">№ 44-ФЗ (94-ФЗ)</option>
 				</select>
 				<br />
-				<input type="submit" value="Получить контакты организаций" name="request_contacts_of_region" class='submit_org_list'>
+
+				<h3>Уровень организации</h3>
+				<select name="org_level" class="org_level">
+					<option value="any" name="org_level_value">Любой</option>
+					<option value="F" name="org_level_value">Федеральный уровень</option>
+					<option value="S" name="org_level_value">Уровень субъекта РФ</option>
+					<option value="M" name="org_level_value">Муниципальный уровень</option>
+					<option value="NOT_FSM" name="org_level_value">Иное</option>
+				</select>
+				<br /><br />
+
+				<input type="submit" value="Получить контакты организаций" name="request_contacts_by_filter" class='submit_org_list'>
 			</form>
+
+			<div class="information">
+				<p>Уведомления:</p>
+				<p></p>
+				<p>Контакты организаций по Ставропольскому краю еще собраны не все.</p>
+				<p>Последний этап: 44-ФЗ, Муниципальный уровень.</p>
+			</div>
 			<div class="waiting"></div>
-		{% endif %}
 
-		{% if xlsx_file %}
+		{% else %}
 
-			{% if xlsx_errors %}
-				{% for error in xlsx_errors %}
-					<span class="red">{{ error }}</span><br />
-				{% endfor %}
-			{% else %}
-				<p><a href="/static/xlsx/{{xlsx_file}}">Скачать XLSX файл с контактами</a></p>
+			{% if xlsx_file %}
+				<p><a href="/static/xlsx/{{xlsx_file}}">Скачать XLSX файл с контактами</a> ( количество организаций: {{amount_orgs}} )</p>
+				<p>Выбранный фильтр:</p>
+				<p>Регион: {{selected_region.region_name}}</p>
+				<p>ФЗ: {{selected_fz}}</p>
+				<p>Уровень организации: {{selected_level}}</p>
 			{% endif %}
 
 		{% endif %}
+
 		<br /><br /><a href="/clear/">Сброс</a>
 		<br /><br /><a href="/logout/">Выйти</a>
+
 	{% endif %}
+
 </div>
+
 <script>
 	$('.submit_org_list').click(function() {
-		$('.waiting').html('<p>Ожидайте генерации файла, может занять более 1-ой минуты...</p>')
+		$('.waiting').html('<p>Генерация файла...</p>')
 	});
 </script>
