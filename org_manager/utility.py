@@ -163,7 +163,8 @@ def getOrganizationContacts(url, name):
 				opener.addheaders = [('User-agent', ua.random)]
 				stream = opener.open(url).read().decode('utf-8')
 				return stream, kt
-			except:
+			except Exception,e:
+				print('__ Getting contacts exception (repeating): ' + str(e))
 				delays = [80,90,100,110]
 				time.sleep(random.choice(delays))
 				return strm(kt)
