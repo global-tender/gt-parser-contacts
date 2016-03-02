@@ -1,0 +1,32 @@
+#!/bin/bash
+
+
+# region_id=('68')
+# fz=('FZ_223' 'FZ_94')
+# sorting=('PO_NAZVANIYU' 'PO_RELEVANTNOSTI')
+# sortDirection=('true' 'false')
+# custLev=('F' 'S' 'M' 'NOT_FSM')
+
+# Закончить Ставропольский край:
+region_id=('68')
+fz=('FZ_94')
+sorting=('PO_RELEVANTNOSTI')
+sortDirection=('false')
+custLev=('M')
+
+for region_id_item in "${region_id[@]}"
+do
+	for fz_item in "${fz[@]}"
+	do
+		for sorting_item in "${sorting[@]}"
+		do
+			for sortDirection_item in "${sortDirection[@]}"
+			do
+				for custLev_item in "${custLev[@]}"
+				do
+					python manage.py flow $region_id_item $fz_item $sorting_item $sortDirection_item $custLev_item
+				done
+			done
+		done
+	done
+done
