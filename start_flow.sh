@@ -1,18 +1,11 @@
 #!/bin/bash
 
 
-# region_id=('68')
-# fz=('FZ_223' 'FZ_94')
-# sorting=('PO_NAZVANIYU' 'PO_RELEVANTNOSTI')
-# sortDirection=('true' 'false')
-# custLev=('F' 'S' 'M' 'NOT_FSM')
-
-# Закончить Ставропольский край:
-region_id=('68')
-fz=('FZ_94')
-sorting=('PO_RELEVANTNOSTI')
-sortDirection=('false')
-custLev=('M')
+region_id=('3' '4')
+fz=('FZ_223' 'FZ_94')
+sorting=('PO_NAZVANIYU' 'PO_RELEVANTNOSTI')
+sortDirection=('true' 'false')
+custLev=('F' 'S' 'M' 'NOT_FSM')
 
 for region_id_item in "${region_id[@]}"
 do
