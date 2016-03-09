@@ -6,6 +6,8 @@ import time
 import random
 from fake_useragent import UserAgent
 
+from django.utils import timezone
+
 # First step, waiting user choice: request list of available regions
 def getRegionList():
 	errors = []
@@ -16,7 +18,13 @@ def getRegionList():
 		opener = urllib2.build_opener()
 		opener.addheaders = [('User-agent', ua.random)]
 		stream = opener.open(url).read().decode('utf-8')
-	except:
+	except Exception, e:
+
+		if '434' in str(e): # Ведутся регламентные работы (страницы вернула HTTP Status 434)
+			print("--- Ведутся регламентные работы, следующая попытка запроса через 1 час. " + str(timezone.now()))
+			time.sleep(3600) # Ждем 1 час, пробуем снова
+			return getRegionList()
+
 		errors.append(u'Ошибка, повторите позже. Debug info: step 0 (list of regions)')
 		return regions, errors
 
@@ -58,7 +66,14 @@ def getAmountPages(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 			opener.addheaders = [('User-agent', ua.random)]
 			stream = opener.open(url).read().decode('utf-8')
 			return stream, kt
-		except:
+		except Exception, e:
+
+			if '434' in str(e): # Ведутся регламентные работы (страницы вернула HTTP Status 434)
+				print("--- Ведутся регламентные работы, следующая попытка запроса через 1 час. " + str(timezone.now()))
+				time.sleep(3600) # Ждем 1 час, пробуем снова
+				kt = 0
+				return strm(kt)
+
 			delays = [80,90,100,110]
 			time.sleep(random.choice(delays))
 			return strm(kt)
@@ -99,7 +114,14 @@ def getCompanyList(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 			opener.addheaders = [('User-agent', ua.random)]
 			stream = opener.open(url).read().decode('utf-8')
 			return stream, kt
-		except:
+		except Exception, e:
+
+			if '434' in str(e): # Ведутся регламентные работы (страницы вернула HTTP Status 434)
+				print("--- Ведутся регламентные работы, следующая попытка запроса через 1 час. " + str(timezone.now()))
+				time.sleep(3600) # Ждем 1 час, пробуем снова
+				kt = 0
+				return strm(kt)
+
 			delays = [80,90,100,110]
 			time.sleep(random.choice(delays))
 			return strm(kt)
@@ -163,8 +185,16 @@ def getOrganizationContacts(url, name):
 				opener.addheaders = [('User-agent', ua.random)]
 				stream = opener.open(url).read().decode('utf-8')
 				return stream, kt
-			except Exception,e:
+			except Exception, e:
+
 				print('__ Getting contacts exception (repeating): ' + str(e))
+
+				if '434' in str(e): # Ведутся регламентные работы (страницы вернула HTTP Status 434)
+					print("--- Ведутся регламентные работы, следующая попытка запроса через 1 час. " + str(timezone.now()))
+					time.sleep(3600) # Ждем 1 час, пробуем снова
+					kt = 0
+					return strm(kt)
+
 				delays = [80,90,100,110]
 				time.sleep(random.choice(delays))
 				return strm(kt)
