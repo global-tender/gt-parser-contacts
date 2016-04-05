@@ -12,7 +12,7 @@ from django.utils import timezone
 def getRegionList():
 	errors = []
 	regions = []
-	url = 'http://www.zakupki.gov.ru/epz/organization/organization/extended/search/form.html'
+	url = 'http://new.zakupki.gov.ru/epz/organization/extendedsearch/search.html'
 	try:
 		ua = UserAgent()
 		opener = urllib2.build_opener()
@@ -28,15 +28,16 @@ def getRegionList():
 		errors.append(u'Ошибка, повторите позже. Debug info: step 0 (list of regions)')
 		return regions, errors
 
-	stream = stream.split('manySelect_regions')[1].split('bankDetails')[0]
-
 	soup = BeautifulSoup(stream, 'html.parser')
 
-	for li in soup.find_all('li'):
-		for input_v in li.find_all('input'):
-			region_code = input_v.get('value')
+	st = soup.find_all('ul', {'id':'regionsTagDataContainer'})[0]
+
+	for li in st.find_all('li'):
+		input_id = li.find_all('input')[0]
+		region_code = str(input_id.get('id').split("_")[-1])
 
 		regions.append( [li.text, region_code] )
+
 	return regions, errors
 
 # Second step, several requests:
@@ -49,8 +50,8 @@ def getAmountPages(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 	pages = 1
 	stream = False
 
-	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&sortDirection=%s&organizationSimpleSorting=%s' % (
-		placeOfSearch, custLev, regionIds, pageNumber, recordsPerPage, sortDirection, sorting_type)
+	url = 'http://new.zakupki.gov.ru/epz/organization/extendedsearch/results.html?searchString=&morphology=on&openMode=USE_DEFAULT_PARAMS&pageNumber=%s&sortDirection=%s&recordsPerPage=%s&sortBy=%s&registered94=on&notRegistered=on&registered223=on&blocked=on&inn=&ogrn=&kpp=&organizationRoleList=&okvedIds=&ppoIds=&address=&districtIds=&regions=%s%s%s' % (
+		pageNumber, sortDirection, recordsPerPage, sorting_type, regionIds, '&'+placeOfSearch+'=on', '&'+custLev+'=on')
 
 	kt = 0
 	def strm(kt):
@@ -92,16 +93,19 @@ def getAmountPages(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 		pages = 1
 		return pages, errors
 
-	data = re.findall( '.*<a href="javascript:goToPage\(.*\)">(.*)</a>.*', stream.split(u'<li>из</li>')[1].split('<li class="rightArrow">')[0] )
-	if data:
-		pages = data[0]
+	soup = BeautifulSoup(stream, 'html.parser')
+	st = soup.find_all('li', {'class':'rightArrow'})[0]
+	ahref = st.find_all('a')[0]
+	pages = re.findall('javascript:goToPage\((.*)\)', str(ahref.get('href')))[0]
+
 	return int(pages), errors
 
 def getCompanyList(regionIds, placeOfSearch, custLev, sorting_type, sortDirection, pageNumber='1', recordsPerPage='_10'):
 	errors = []
 	organization_links = {}
-	url = 'http://zakupki.gov.ru/epz/organization/organization/extended/search/result.html?placeOfSearch=%s&registrationStatusType=ANY&&kpp=&custLev=%s&_custLev=on&_custLev=on&_custLev=on&_custLev=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_organizationRoleList=on&_okvedWithSubElements=on&okvedCode=&ppoCode=&address=&regionIds=%s&bik=&bankRegNum=&bankIdCode=&town=&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&_organizationTypeList=on&spz=&_withBlocked=on&customerIdentifyCode=&_headAgencyWithSubElements=on&headAgencyCode=&_organizationsWithBranches=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&_legalEntitiesTypeList=on&publishedOrderClause=true&_publishedOrderClause=on&unpublishedOrderClause=true&_unpublishedOrderClause=on&pageNumber=%s&searchText=&strictEqual=false&morphology=false&recordsPerPage=%s&sortDirection=%s&organizationSimpleSorting=%s' % (
-		placeOfSearch, custLev, regionIds, pageNumber, recordsPerPage, sortDirection, sorting_type)
+
+	url = 'http://new.zakupki.gov.ru/epz/organization/extendedsearch/results.html?searchString=&morphology=on&openMode=USE_DEFAULT_PARAMS&pageNumber=%s&sortDirection=%s&recordsPerPage=%s&sortBy=%s&registered94=on&notRegistered=on&registered223=on&blocked=on&inn=&ogrn=&kpp=&organizationRoleList=&okvedIds=&ppoIds=&address=&districtIds=&regions=%s%s%s' % (
+		pageNumber, sortDirection, recordsPerPage, sorting_type, regionIds, '&'+placeOfSearch+'=on', '&'+custLev+'=on')
 
 	kt = 0
 	def strm(kt):
@@ -133,34 +137,25 @@ def getCompanyList(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 
 	soup = BeautifulSoup(stream, 'html.parser')
 
-	orgs = []
+	st = soup.find_all('td', {'class':'descriptTenderTd'})
 
-	for dt in soup.find_all('dt'):
-		orgs.append(dt)
+	for td in st:
+		for a in td.find_all('a'):
+			if a.get('href'):
+				link = a.get('href')
+			elif a.get('onclick'):
+				found_http = re.findall('\'(http.*)\'', a.get('onclick'))
+				for http_link in found_http[0].split("', '"):
+					if placeOfSearch == 'fz223':
+						if '/223/' in http_link:
+							link = http_link
+							break
+					if placeOfSearch == 'fz94':
+						if '/pgz/' in http_link:
+							link = http_link
+							break
 
-	for org in orgs:
-		
-		for item in org.find_all('a'):
-			href = item.get('href')
-			if href:
-				link = href
-
-			onclick = item.get('onclick')
-			if onclick:
-				found_http = re.findall('\'(http.*)\'', onclick)
-				if found_http:
-					for http_link in found_http[0].split("', '"):
-						if placeOfSearch == "FZ_223" or placeOfSearch == "EVERYWHERE":
-							if '/223/' in http_link:
-								link = http_link
-								break
-						if placeOfSearch == "FZ_94":
-							if '/pgz/' in http_link:
-								link = http_link
-								break
-
-			name = item.text
-			organization_links[link] = name.strip()
+			organization_links[link] = a.text.strip()
 
 	return organization_links, errors
 
