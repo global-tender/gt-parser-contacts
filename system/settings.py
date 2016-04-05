@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'system.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(BASE_DIR, 'db/db.sqlite3'),
+		'NAME': os.path.join(BASE_DIR, 'db_sqlite/db.sqlite3'),
 	}
 }
 
@@ -99,3 +99,4 @@ STATIC_URL = '/static/'
 
 DEFAULT_FROM_EMAIL = 'zakupki@global-tender.ru'
 EMAIL_HOST='127.0.0.1'
+
