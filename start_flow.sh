@@ -1,11 +1,17 @@
 #!/bin/bash
 
 
-region_id=('3' '4')
-fz=('FZ_223' 'FZ_94')
-sorting=('PO_NAZVANIYU' 'PO_RELEVANTNOSTI')
-sortDirection=('true' 'false')
-custLev=('F' 'S' 'M' 'NOT_FSM')
+# region_id=('3' '4')
+# fz=('fz223' 'fz94')
+# sorting=('PO_NAZVANIYU' 'PO_RELEVANTNOSTI')
+# sortDirection=('true' 'false')
+# custLev=('F' 'S' 'M' 'NOT_FSM')
+
+region_id=('1')
+fz=('fz223')
+sorting=('PO_NAZVANIYU')
+sortDirection=('true')
+custLev=('F')
 
 for region_id_item in "${region_id[@]}"
 do
