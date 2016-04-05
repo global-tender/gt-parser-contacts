@@ -54,14 +54,14 @@ def index(request):
 			org_level_value = request.POST.get('org_level', '')
 
 
-			if fz_value == 'FZ_223':
+			if fz_value == 'fz223':
 
 				if org_level_value and org_level_value != 'any':
 					orgs = Organizations.objects.filter(org_region=region_value,works_with_223=True,org_level_223=org_level_value)
 				else:
 					orgs = Organizations.objects.filter(org_region=region_value,works_with_223=True)
 
-			else: #'FZ_94':
+			else: #'fz94':
 
 				if org_level_value and org_level_value != 'any':
 					orgs = Organizations.objects.filter(org_region=region_value,works_with_44=True,org_level_44=org_level_value)
@@ -81,8 +81,8 @@ def index(request):
 			}
 
 			fz_list = {
-				'FZ_223': u'223-ФЗ',
-				'FZ_94': u'44-ФЗ',
+				'fz223': u'223-ФЗ',
+				'fz94': u'44-ФЗ',
 			}
 
 			selected_fz = fz_list[fz_value]
@@ -146,10 +146,10 @@ def index(request):
 			row = 4
 			for org in orgs:
 
-				if fz_value == 'FZ_223':
+				if fz_value == 'fz223':
 					contacts_obj = Contacts_223_FZ
 					custLev = org.org_level_223
-				elif fz_value == 'FZ_94':
+				elif fz_value == 'fz94':
 					contacts_obj = Contacts_44_FZ
 					custLev = org.org_level_44
 
