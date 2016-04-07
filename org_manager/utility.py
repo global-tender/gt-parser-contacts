@@ -12,7 +12,7 @@ from django.utils import timezone
 def getRegionList():
 	errors = []
 	regions = []
-	url = 'http://new.zakupki.gov.ru/epz/organization/extendedsearch/search.html'
+	url = 'http://zakupki.gov.ru/epz/organization/extendedsearch/search.html'
 	try:
 		ua = UserAgent()
 		opener = urllib2.build_opener()
@@ -50,7 +50,7 @@ def getAmountPages(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 	pages = 1
 	stream = False
 
-	url = 'http://new.zakupki.gov.ru/epz/organization/extendedsearch/results.html?searchString=&morphology=on&openMode=USE_DEFAULT_PARAMS&pageNumber=%s&sortDirection=%s&recordsPerPage=%s&sortBy=%s&registered94=on&notRegistered=on&registered223=on&blocked=on&inn=&ogrn=&kpp=&organizationRoleList=&okvedIds=&ppoIds=&address=&districtIds=&regions=%s%s%s' % (
+	url = 'http://zakupki.gov.ru/epz/organization/extendedsearch/results.html?searchString=&morphology=on&openMode=USE_DEFAULT_PARAMS&pageNumber=%s&sortDirection=%s&recordsPerPage=%s&sortBy=%s&registered94=on&notRegistered=on&registered223=on&blocked=on&inn=&ogrn=&kpp=&organizationRoleList=&okvedIds=&ppoIds=&address=&districtIds=&regions=%s%s%s' % (
 		pageNumber, sortDirection, recordsPerPage, sorting_type, regionIds, '&'+placeOfSearch+'=on', '&'+custLev+'=on')
 
 	kt = 0
@@ -104,7 +104,7 @@ def getCompanyList(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 	errors = []
 	organization_links = {}
 
-	url = 'http://new.zakupki.gov.ru/epz/organization/extendedsearch/results.html?searchString=&morphology=on&openMode=USE_DEFAULT_PARAMS&pageNumber=%s&sortDirection=%s&recordsPerPage=%s&sortBy=%s&registered94=on&notRegistered=on&registered223=on&blocked=on&inn=&ogrn=&kpp=&organizationRoleList=&okvedIds=&ppoIds=&address=&districtIds=&regions=%s%s%s' % (
+	url = 'http://zakupki.gov.ru/epz/organization/extendedsearch/results.html?searchString=&morphology=on&openMode=USE_DEFAULT_PARAMS&pageNumber=%s&sortDirection=%s&recordsPerPage=%s&sortBy=%s&registered94=on&notRegistered=on&registered223=on&blocked=on&inn=&ogrn=&kpp=&organizationRoleList=&okvedIds=&ppoIds=&address=&districtIds=&regions=%s%s%s' % (
 		pageNumber, sortDirection, recordsPerPage, sorting_type, regionIds, '&'+placeOfSearch+'=on', '&'+custLev+'=on')
 
 	kt = 0
