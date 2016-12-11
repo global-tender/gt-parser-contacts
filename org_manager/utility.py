@@ -61,7 +61,7 @@ def getAmountPages(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 		try:
 			delays = [15,20,25,30,35]
 			time.sleep(random.choice(delays))
-			
+
 			ua = UserAgent()
 			opener = urllib2.build_opener()
 			opener.addheaders = [('User-agent', ua.random)]
