@@ -2,3 +2,4 @@ db_sqlite/
 db_sqlite/*
 *.pyc
 *.xlsx
+system/settings.py
