@@ -7,11 +7,12 @@
 # sortDirection=('true' 'false')
 # custLev=('F' 'S' 'M' 'NOT_FSM')
 
-region_id=('1')
-fz=('fz223')
+region_id=('84' '83')
+fz=('fz94')
 sorting=('PO_NAZVANIYU')
-sortDirection=('true')
-custLev=('F')
+sortDirection=('true' 'false')
+custLev=('F' 'S' 'M' 'NOT_FSM')
+
 
 for region_id_item in "${region_id[@]}"
 do
