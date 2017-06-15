@@ -143,16 +143,22 @@ def getCompanyList(regionIds, placeOfSearch, custLev, sorting_type, sortDirectio
 		for a in td.find_all('a'):
 			if a.get('href'):
 				link = a.get('href')
+				if '://' not in link:
+					link = 'http://zakupki.gov.ru' + link
 			elif a.get('onclick'):
-				found_http = re.findall('\'(http.*)\'', a.get('onclick'))
+				found_http = re.findall('\'(.*)\'', a.get('onclick'))
 				for http_link in found_http[0].split("', '"):
 					if placeOfSearch == 'fz223':
 						if '/223/' in http_link:
 							link = http_link
+							if '://' not in link:
+								link = 'http://zakupki.gov.ru' + link
 							break
 					if placeOfSearch == 'fz94':
-						if '/pgz/' in http_link:
+						if '/epz/' in http_link:
 							link = http_link
+							if '://' not in link:
+								link = 'http://zakupki.gov.ru' + link
 							break
 
 			organization_links[link] = a.text.strip()
