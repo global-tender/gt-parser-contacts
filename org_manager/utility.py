@@ -218,19 +218,20 @@ def getOrganizationContacts(url, name):
 						contacts[f_key] = unicode(td.text.strip())
 						f_key = ''
 						break
-		if '/pgz/' in url:
+		if '/epz/' in url:
 			contacts[u'ФЗ'] = u'№ 44-ФЗ (94-ФЗ)'
 			info = stream.split(u'Контактная информация')[1].split(u'Часовая зона')[0]
 			soup = BeautifulSoup(info, 'html.parser')
 
-			f_key = ''
-			for span in soup.find_all('span'):
-				if f_key == '':
-					f_key = unicode(span.text.strip())
-				else:
-					contacts[f_key] = unicode(span.text.strip())
-					f_key = ''
-					continue
+			for tr in soup.find_all('tr'):
+				f_key = ''
+				for td in tr.find_all('td'):
+					if f_key == '':
+						f_key = unicode(td.text.strip())
+					else:
+						contacts[f_key] = unicode(td.text.strip())
+						f_key = ''
+						break
 	except Exception as e:
 		errors.append(u"Не удалось получить контактную информацию по организации, возможно не зарегистрирована или заблокирована: %s (%s)" % (url, e))
 
