@@ -156,6 +156,9 @@ def index(request):
 
 				contacts = contacts_obj.objects.filter(org_id=org.id).first()
 
+				if not contacts: # Organization does not have contacts
+					continue
+
 				worksheet.write(row, 0, u"" + org.org_name)
 				worksheet.write(row, 1, u"" + selected_fz)
 				worksheet.write(row, 2, u"" + custLev_list[custLev])
